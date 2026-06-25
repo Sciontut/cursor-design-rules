@@ -1,0 +1,113 @@
+---
+description: Canonical DESIGN.md format specification (Google Labs, @google/design.md, version alpha). The normative schema, token types, section order, and lint rules for authoring or validating any DESIGN.md. Apply whenever creating, editing, or reasoning about a DESIGN.md file.
+globs:
+alwaysApply: false
+---
+
+# DESIGN.md Specification (canonical reference)
+
+A DESIGN.md describes a visual identity to coding agents: machine-readable tokens in YAML front matter, plus human-readable rationale in markdown prose. Tokens are the normative values; prose explains why they exist and how to apply them. Format version: `alpha`. CLI: `@google/design.md`.
+
+## File structure
+
+Two layers:
+1. **YAML front matter** — design tokens, delimited by `---` fences at the top.
+2. **Markdown body** — rationale in `##` sections.
+
+## Token schema
+
+```yaml
+version: alpha            # optional
+name: <string>
+description: <string>     # optional
+colors:
+  <token-name>: <Color>
+typography:
+  <token-name>:
+    fontFamily: <string>
+    fontSize: <Dimension>
+    fontWeight: <number>      # optional
+    lineHeight: <number>      # optional
+    letterSpacing: <Dimension> # optional
+rounded:
+  <scale-level>: <Dimension>
+spacing:
+  <scale-level>: <Dimension | number>
+components:
+  <component-name>:
+    <property>: <string | token reference>
+```
+
+## Token types
+
+| Type | Format | Example |
+|:--|:--|:--|
+| Color | `#` + hex (sRGB) | `"#1A1C1E"` |
+| Dimension | number + unit (`px`, `em`, `rem`) | `48px`, `-0.02em` |
+| Token Reference | `{path.to.token}` | `{colors.primary}` |
+| Typography | object: `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, `letterSpacing`, `fontFeature`, `fontVariation` | see schema |
+
+## Section order (MANDATORY)
+
+Sections use `##`. Any may be omitted, but those present MUST appear in this order:
+
+1. **Overview** (alias: Brand & Style)
+2. **Colors**
+3. **Typography**
+4. **Layout** (alias: Layout & Spacing)
+5. **Elevation & Depth** (alias: Elevation)
+6. **Shapes**
+7. **Components**
+8. **Do's and Don'ts**
+
+Out-of-order sections trigger the `section-order` warning. Duplicate section headings are a hard error and reject the file.
+
+## Component tokens
+
+Map a name to sub-token properties. Valid properties: `backgroundColor`, `textColor`, `typography`, `rounded`, `padding`, `size`, `height`, `width`. Variants (hover, active, pressed) are separate entries with a related key name.
+
+```yaml
+components:
+  button-primary:
+    backgroundColor: "{colors.tertiary}"
+    textColor: "{colors.on-tertiary}"
+    rounded: "{rounded.sm}"
+    padding: 12px
+  button-primary-hover:
+    backgroundColor: "{colors.tertiary-container}"
+```
+
+## Lint rules (seven, fixed severities)
+
+| Rule | Severity | Checks |
+|:--|:--|:--|
+| `broken-ref` | error | Token references that don't resolve |
+| `missing-primary` | warning | Colors defined but no `primary` |
+| `contrast-ratio` | warning | Component bg/text pair below WCAG AA (4.5:1) |
+| `orphaned-tokens` | warning | Color tokens never referenced by a component |
+| `token-summary` | info | Count of tokens per section |
+| `missing-sections` | info | Optional sections (spacing, rounded) absent when other tokens exist |
+| `missing-typography` | warning | Colors defined but no typography |
+| `section-order` | warning | Sections out of canonical order |
+
+## Consumer behavior for unknown content
+
+| Scenario | Behavior |
+|:--|:--|
+| Unknown section heading | Preserve; do not error |
+| Unknown color/typography token name | Accept if value valid |
+| Unknown component property | Accept with warning |
+| Duplicate section heading | Error; reject file |
+
+## CLI
+
+```bash
+npx @google/design.md lint DESIGN.md       # validate (exit 1 on error)
+npx @google/design.md diff A.md B.md        # token-level changes (exit 1 on regression)
+npx @google/design.md export --format css-tailwind DESIGN.md   # Tailwind v4 @theme block
+npx @google/design.md export --format json-tailwind DESIGN.md  # Tailwind v3 theme.extend
+npx @google/design.md export --format dtcg DESIGN.md           # W3C Design Tokens
+npx @google/design.md spec                  # emit the spec into agent context
+```
+
+Tokens are inspired by the W3C Design Token Format. The spec is `alpha` and under active development; expect changes.
