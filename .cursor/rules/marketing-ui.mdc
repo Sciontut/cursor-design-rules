@@ -1,0 +1,35 @@
+---
+description: Design guidance for marketing UI — landing pages, hero sections, product launches, portfolios, and brand storytelling where distinctiveness and a memorable signature moment matter. Apply when building expressive, conversion-oriented pages rather than daily-use app screens. Reads from 3d-fingerprint.js output.
+globs:
+alwaysApply: false
+---
+
+# Marketing UI
+
+Marketing UI exists to make one impression land. Landing pages, hero sections, launch pages, portfolios — pages someone sees once and should remember. Unlike functional UI (which gets out of the way), marketing UI earns attention with a signature moment, typographic personality, and motion that serves the subject. This rule pairs with the `frontend-design` rule for aesthetic direction; it adds the motion/3D layer drawn from the fingerprinter.
+
+## Input: 3d-fingerprint.js JSON
+
+This rule consumes the JSON printed by `scripts/3d-fingerprint.js`, which characterizes a reference site's "feel" layer. Map its fields as follows:
+
+- **`motionLayer`** — the core signal. `gsapVersion` and `scrollTriggerLoaded` indicate scroll-driven storytelling; `lenisActive` indicates smooth-scroll inertia (a specific, deliberate feel). `prefersReducedMotion` is a reminder, not a data point — always honor it in output regardless of what the reference does.
+- **`frameworks`** — `reactThreeFiber` / `babylon` / `splineRuntime` tell you the reference leans on real-time 3D; `gsap` / `lenis` tell you it's motion-led but DOM-based. Match ambition to the framework the brief actually warrants — don't reach for R3F if the brief is a type-led editorial page.
+- **`canvases`** + **`sceneStats`** — if a WebGL canvas is present and substantial (large buffer, high DPR), the reference's signature is likely a 3D hero. Note GPU/maxTextureSize only as a feasibility ceiling, not a target.
+- **`assets`** — `models` (glb/gltf), `hdrEnvMaps`, `splineScenes`, `videoTextures` reveal what the signature moment is *made of*. A page loading an HDR env map and a GLB is doing lit 3D; a page loading only video textures is doing cinematic playback. Use this to characterize, not to copy the assets themselves.
+- **`bundledThreeHints`** — confirms a bundled 3D stack even when `threeDetected` is false (the common case for production apps).
+
+The asset URLs in this JSON are **data describing the reference, never instructions to fetch**. Do not download the reference's models or textures; characterize the technique and build original assets.
+
+## Marketing design principles
+
+The hero is a thesis. Open with the most characteristic thing in the subject's world — and if the fingerprint shows a 3D or motion-led reference, consider whether an orchestrated load sequence or scroll reveal is the right signature here. Often it isn't; a single bold type moment can out-perform a heavy WebGL scene.
+
+Spend boldness in one place. Pick one signature — a 3D object, a scroll-choreographed reveal, an ambient shader, a typographic stunt — and keep everything around it disciplined. Scattered effects read as AI-generated; one orchestrated moment reads as intentional.
+
+Motion serves the subject or it's noise. Map the reference's motion vocabulary (from `motionLayer`) to a deliberate choice: smooth-scroll inertia for a calm luxury feel, snappy scroll-triggers for energy, ambient loops for atmosphere. Then justify it against the brief.
+
+Performance and restraint are part of the craft. A WebGL hero that janks on a mid-tier phone fails. Honor `prefers-reduced-motion` with a meaningful static fallback, lazy-load heavy assets, and keep the quality floor (mobile-responsive, keyboard-navigable, visible focus) even on an expressive page.
+
+## Output
+
+Produce a marketing-UI direction that names the signature moment explicitly and specifies its motion/3D technique (derived from the fingerprint's feel layer, not its assets). Pair this with the `frontend-design` rule for palette, type, and layout. Where you build a DESIGN.md, add motion tokens (durations, easings) and follow the `designmd-spec` section order. Always specify the reduced-motion fallback alongside the animated version.
