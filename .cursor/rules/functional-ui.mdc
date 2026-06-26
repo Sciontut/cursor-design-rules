@@ -1,0 +1,38 @@
+---
+description: Design guidance for functional UI — dashboards, app screens, forms, settings, data tables, and any interface whose job is to be used, not admired. Apply when building or refining application interfaces where clarity, scannability, and interaction correctness matter more than brand spectacle. Reads from css-extractor.js output.
+globs:
+alwaysApply: false
+---
+
+# Functional UI
+
+Functional UI is interface that gets out of the way. Dashboards, admin panels, forms, settings, tables, editors — screens people return to daily and need to operate quickly. The goal is legibility and low cognitive load, not a memorable signature moment (that's `marketing-ui`). Distinctiveness here lives in precision: consistent spacing, honest hierarchy, and interaction states that always tell the truth.
+
+## Input: css-extractor.js JSON
+
+This rule consumes the JSON printed by `scripts/css-extractor.js`. Map its fields as follows:
+
+- **`cssVariables`** — if present, these named tokens (`--color-*`, `--space-*`, `--radius-*`, `--font-*`) are the source of truth. A functional UI almost always has a real token system; surface it and build on it rather than re-deriving from rendered output.
+- **`colors.backgrounds` / `colors.text` / `colors.borders`** — frequency-weighted. The top background is the app surface; the top text color is body copy; border colors define the table/card/divider system that does most of the structural work in functional UI.
+- **`typography.fontSizes` / `fontWeights` / `lineHeights`** — the real type scale. Functional UI needs a tight, predictable scale (typically 5–7 steps). Pull the recurring sizes; ignore one-off outliers.
+- **`spacing`** — the most important signal here. Functional density lives or dies on a consistent spacing scale. Identify the base unit (often 4px or 8px) from the highest-frequency values and build a scale from it.
+- **`shape.borderRadius`** — usually one or two values in functional UI. More than three distinct radii is a smell worth flagging.
+- **`shadows`** — elevation system for menus, popovers, modals. Map distinct shadows to elevation levels.
+
+If a field is sparse or the captured page was simple, note the gap with `# uncertain — verify on live site` rather than inventing a scale.
+
+## Functional design principles
+
+Hierarchy by weight and space, not decoration. Establish rank with type size, weight, and whitespace before reaching for color or rules. A functional screen should be scannable in grayscale.
+
+Density is a feature, not a flaw — when earned. Data-dense interfaces (tables, dashboards) should use tabular/monospaced figures for numeric columns, prices, and timers to prevent layout shift. Tight, consistent spacing beats generous padding when the user's job is comparison.
+
+Interaction states are non-negotiable. Every interactive element needs visible, distinct states: default, hover, focus (keyboard-visible), active, disabled, and where relevant loading and error. Keep an action's name consistent through its flow ("Save" → "Saving" → "Saved").
+
+Structure encodes meaning. Borders, dividers, and grouping should reflect real relationships in the data. Use the border color system from the extractor to separate, not to ornament.
+
+Errors and empty states are direction. State plainly what happened and the next action, in the interface's voice. An empty table is an invitation to add the first row, not blank space.
+
+## Output
+
+Produce a functional-UI spec or implementation derived strictly from the extractor JSON: a token scale (spacing, type, radius, elevation), a color role mapping (surface, on-surface, border, interactive, error/success), and component specs for the interface's real elements (tables, forms, nav, cards). Where you build a DESIGN.md, follow the `designmd-spec` section order and lint rules, and lean on the `designmd-extractor` confidence rules for any color appearing fewer than 3 times. Prioritize WCAG AA contrast (4.5:1) on every text/background pair — functional UI is read constantly.
