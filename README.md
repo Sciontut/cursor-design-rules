@@ -7,6 +7,8 @@ Cursor rules and extraction scripts for an AI-assisted website design pipeline. 
 ```
 .cursor/rules/
   frontend-design.mdc      # aesthetic direction, anti-templating  (agent-decided)
+  functional-ui.mdc        # dashboards/apps/forms, keyed to css-extractor.js (agent-decided)
+  marketing-ui.mdc         # landing/hero/brand, keyed to 3d-fingerprint.js (agent-decided)
   designmd-spec.mdc        # canonical DESIGN.md schema + lint rules (agent-decided)
   designmd-extractor.mdc   # extractor JSON -> spec-compliant DESIGN.md (agent-decided)
   extraction-runbook.mdc   # how to run the console scripts (agent-decided)
@@ -15,9 +17,16 @@ scripts/
   3d-fingerprint.js        # DevTools console: Three.js / R3F / WebGL / motion stack
 ```
 
+## Two UI modes
+
+`functional-ui` and `marketing-ui` split design work by intent, each wired to one extractor script:
+
+- **functional-ui** (dashboards, app screens, forms, tables) reads `css-extractor.js` output — spacing scale, type scale, border/elevation system, named CSS variables. Optimizes for clarity, density, and interaction correctness.
+- **marketing-ui** (landing pages, heroes, launches, portfolios) reads `3d-fingerprint.js` output — the motion/3D "feel" layer (GSAP, Lenis, R3F, assets). Optimizes for a single signature moment, pairs with `frontend-design`, and always specifies a reduced-motion fallback.
+
 ## Activation
 
-All four rules use `alwaysApply: false` with a `description`, so Cursor's agent pulls each one in when the task matches — design work loads `frontend-design`, a DESIGN.md task loads the spec and extractor rules, and so on. This keeps non-design work (Python, backtests, MCP servers) free of design context. To force a rule always-on, set `alwaysApply: true` in its front matter; to scope by file type, add a `globs:` list (e.g. `["**/*.tsx", "**/*.css", "**/*.astro"]`).
+All rules use `alwaysApply: false` with a `description`, so Cursor's agent pulls each one in when the task matches — design work loads `frontend-design`, an app screen loads `functional-ui`, a landing page loads `marketing-ui`, a DESIGN.md task loads the spec and extractor rules. This keeps non-design work (Python, backtests, MCP servers) free of design context. To force a rule always-on, set `alwaysApply: true` in its front matter; to scope by file type, add a `globs:` list (e.g. `["**/*.tsx", "**/*.css", "**/*.astro"]`).
 
 ## Pipeline
 
