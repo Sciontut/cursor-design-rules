@@ -1,0 +1,20 @@
+cursor-design-rules
+Copyright 2026 Michael McCollough (Sciontut)
+
+This repository is licensed under the Apache License, Version 2.0. See LICENSE.
+
+This repository includes material derived from the following third-party
+works. Their authors are credited here for provenance only; they are not
+affiliated with, and do not endorse, this repository.
+
+1. .cursor/rules/frontend-design.mdc
+   Modified from the "frontend-design" skill by Anthropic
+   (https://github.com/anthropics/skills, skills/frontend-design),
+   licensed under the Apache License, Version 2.0.
+   Condensed and rewritten as a Cursor rule.
+
+2. .cursor/rules/designmd-spec.mdc
+   Summarizes the DESIGN.md format specification from Google Labs
+   (https://github.com/google-labs-code/design.md, docs/spec.md),
+   licensed under the Apache License, Version 2.0.
+   Restated and condensed as a Cursor rule.

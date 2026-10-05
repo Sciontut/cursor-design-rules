@@ -43,3 +43,7 @@ Spend your boldness in one place. Let the signature element be the one memorable
 ## More on writing in design
 
 Words exist to make a design easier to understand and use. Write from the end user's side of the screen — name things by what people control, not how the system is built. Use active voice: "Save changes," not "Submit." Keep an action's name consistent through a flow ("Publish" → "Published"). Treat errors and empty states as direction, not mood. Keep the register conversational, sentence case, no filler.
+
+---
+
+*Modified from Anthropic's `frontend-design` skill (anthropics/skills, Apache-2.0); condensed and rewritten as a Cursor rule.*
